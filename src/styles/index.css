@@ -2,5 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Было color-scheme: dark; — удаляем, чтобы всё стало по-настоящему светлым */
-html, body, #root { height: 100%; background: #9b9b9b; }
+/* Всегда тёмный фон: градиент задаётся в App через классы,
+   но тут добавим паттерны для глубины */
+html, body, #root { height: 100%; background: #0B1020; }
+
+/* нежный “меш” (градиентная сетка) */
+.bg-mesh {
+  background-image:
+    radial-gradient(1200px 600px at 10% 10%, rgba(255, 0, 128, .12), transparent 60%),
+    radial-gradient(900px 500px at 90% 20%, rgba(255, 200, 0, .10), transparent 60%),
+    radial-gradient(900px 600px at 30% 90%, rgba(0, 180, 255, .10), transparent 60%);
+  background-size: cover;
+}
+
+/* лёгкий шум, чтобы стекло/градиент выглядели богаче */
+.bg-noise {
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0, rgba(255,255,255,.03) 1px, transparent 1px, transparent 2px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0, rgba(255,255,255,.02) 1px, transparent 1px, transparent 2px);
+  mix-blend-mode: soft-light;
+}
