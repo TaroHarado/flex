@@ -15,6 +15,9 @@ import {
   Image as ImageIcon,
   Calculator,
   ClipboardList,
+  Sparkles,
+  TrendingUp,
+  Timer,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -33,24 +36,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 
 /** =========================
- * CONFIG — тексты/логика
+ * CONFIG — тексты / логика
  * ========================= */
 const CONFIG = {
-  brand: "Spread",
-  tokenTicker: "SPREAD",
-  tagline: "Turn trading fees into creator rewards.",
+  brand: "Flex",
+  tokenTicker: "FLEX",
+  tagline: "Creators run the show. Fees flow back to you.",
   subtitle:
-    "We return 100% of $SPREAD fees from Pump.Fun back to creators who post short clips with our logo.",
+    "100% of trading fees from $FLEX on Pump.Fun are redistributed to short-form creators who use our branding in viral clips.",
   links: {
     pump: "https://pump.fun/",
-    x: "https://x.com/Spread_sol",
+    x: "https://x.com/flex_reward",
   },
   program: {
     startDateISO: "2023-10-21",
     minViews: 10_000,
     allowedPlatforms: ["TikTok", "Instagram Reels", "YouTube Shorts", "Twitter"],
     disallowedPlatforms: [] as string[],
-    payoutNetworks: ["SOL", "$SPREAD"],
+    payoutNetworks: ["SOL", "$FLEX"],
   },
   tiers: [
     { min: 10_000, max: 49_999, payoutUSD: [2, 10] },
@@ -59,6 +62,13 @@ const CONFIG = {
     { min: 500_000, max: 999_999, payoutUSD: [100, 180] },
     { min: 1_000_000, max: null, payoutUSD: [200, 200] },
   ],
+  pool: {
+    // заглушки — можешь связать с бэком позже
+    feesCollectedUSD: 42137,
+    creatorsPaidUSD: 28750,
+    clipsSubmitted: 1384,
+    postsApproved: 912,
+  },
 };
 
 function formatRange(min?: number | null, max?: number | null) {
@@ -68,7 +78,7 @@ function formatRange(min?: number | null, max?: number | null) {
   return "—";
 }
 
-export default function SpreadSite() {
+export default function FlexSite() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [calcViews, setCalcViews] = useState(10000);
@@ -106,7 +116,7 @@ export default function SpreadSite() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 900)); // здесь подключишь свой webhook позже
+    await new Promise((r) => setTimeout(r, 900)); // подключишь свой webhook позже
     setSubmitting(false);
     setSubmitted(true);
   }
@@ -118,12 +128,12 @@ export default function SpreadSite() {
 
   return (
     <div className="relative min-h-screen text-slate-100">
-      {/* BACKDROP: тёмный градиент + лёгкий узор + шум */}
-      <div className="absolute inset-0 -z-50 bg-gradient-to-br from-[#0B1020] via-[#0F172A] to-[#111827]" />
+      {/* BACKDROP: глубокий тёмный градиент + mesh + noise */}
+      <div className="absolute inset-0 -z-50 bg-gradient-to-br from-[#0B1020] via-[#0F172A] to-[#0B1020]" />
       <div className="absolute inset-0 -z-40 bg-mesh opacity-25 pointer-events-none" />
       <div className="absolute inset-0 -z-30 bg-noise opacity-[.08] pointer-events-none" />
 
-      {/* NAVBAR */}
+      {/* NAVBAR — компактная полоска */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black/30 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-5 py-3 flex items-center gap-4">
           <a href="#top" className="flex items-center gap-3">
@@ -148,9 +158,8 @@ export default function SpreadSite() {
           <nav className="ml-auto hidden md:flex items-center gap-6 text-sm text-slate-300">
             <a className="hover:text-white" href="#how">How it works</a>
             <a className="hover:text-white" href="#tiers">Tiers</a>
-            <a className="hover:text-white" href="#rules">Rules</a>
-            <a className="hover:text-white" href="#faq">FAQ</a>
             <a className="hover:text-white" href="#submit">Submit</a>
+            <a className="hover:text-white" href="#faq">FAQ</a>
           </nav>
 
           <div className="hidden md:flex items-center gap-2">
@@ -164,9 +173,8 @@ export default function SpreadSite() {
         </div>
       </header>
 
-      {/* HERO — кардинально новая композиция */}
+      {/* HERO — другой макет: слева copy, справа стеклянная панель со статами */}
       <section id="top" className="relative">
-        {/* светящийся эллипс */}
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[80vw] h-[40vw] max-w-[1100px] max-h-[560px] rounded-[50%] bg-gradient-to-tr from-fuchsia-500/20 via-amber-400/10 to-sky-500/20 blur-3xl -z-10" />
         <div className="mx-auto max-w-7xl px-5 py-14 md:py-20 grid md:grid-cols-12 gap-12 items-center">
           <div className="md:col-span-7">
@@ -178,7 +186,6 @@ export default function SpreadSite() {
             >
               {CONFIG.tagline}
             </motion.h1>
-
             <p className="mt-4 text-slate-300 text-lg md:text-xl max-w-2xl">
               {CONFIG.subtitle}
             </p>
@@ -206,68 +213,85 @@ export default function SpreadSite() {
                 <a href={CONFIG.links.x} target="_blank" rel="noreferrer">X (Twitter)</a>
               </Button>
             </div>
+
+            {/* бегущая строка — отличие по вайбу */}
+            <div className="mt-10 overflow-hidden rounded-xl border border-white/10 bg-white/5">
+              <div className="marquee px-4 py-2 text-sm text-slate-300/90">
+                Flex • 100% fees back • No middlemen • {CONFIG.program.allowedPlatforms.join(" • ")} •
+                One post = one payout • Make it native • Keep the logo visible •
+              </div>
+            </div>
           </div>
 
-          {/* 3D-карточка с “телефоном” и подсветкой */}
           <div className="md:col-span-5">
-            <div className="relative">
-              
-              <div className="rounded-[2rem] border border-white/0 bg-white/0 p-0 backdrop-blur-xl shadow-2xl">
-              
-               
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl shadow-2xl">
+              <div className="grid grid-cols-2 gap-3">
+                <StatTile icon={TrendingUp} label="Fees collected" value={`$${CONFIG.pool.feesCollectedUSD.toLocaleString()}`} />
+                <StatTile icon={CheckCircle2} label="Paid to creators" value={`$${CONFIG.pool.creatorsPaidUSD.toLocaleString()}`} />
+                <StatTile icon={Film} label="Clips submitted" value={CONFIG.pool.clipsSubmitted.toLocaleString()} />
+                <StatTile icon={ShieldCheck} label="Approved posts" value={CONFIG.pool.postsApproved.toLocaleString()} />
               </div>
+              <p className="mt-4 text-xs text-slate-400">
+                Stats update as fees are collected and rewards are sent.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* WHY / HOW — новый блок плиткой 2x3 */}
+      {/* HOW — горизонтальная лента-таймлайн (совсем другой паттерн) */}
       <section id="how" className="mx-auto max-w-7xl px-5 py-16">
-        <div className="text-center mb-10">
+        <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold">How it works</h2>
-          <p className="mt-2 text-slate-300">
-            Create a short, keep Spread as the main character, add our logo, hit the views — and get paid.
+          <p className="mt-2 text-slate-300 max-w-3xl mx-auto">
+            Shoot a native short, add the Flex logo, post on your platform of choice, and submit analytics.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4">
-          {[
-            { icon: Film, title: "Make the clip", text: "Keep it native and fun. Spread should be the main character." },
-            { icon: ImageIcon, title: "Add our logo", text: "Overlay the official Spread title/logo. No other banners or ads." },
-            { icon: Rocket, title: "Post it", text: `Post to ${CONFIG.program.allowedPlatforms.join(", ")}.` },
-            { icon: PlayCircle, title: "Hit the views", text: `Reach ${CONFIG.program.minViews.toLocaleString()}+ on a single post.` },
-            { icon: ClipboardList, title: "Record analytics", text: "One clean scroll (top→bottom), no cuts. Paste link to the recording." },
-            { icon: Wallet, title: "Submit & get paid", text: `Payouts in ${CONFIG.program.payoutNetworks.join(", ")} after approval.` },
-          ].map((s, i) => (
-            <motion.div
-              key={s.title}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.35 }}
-              transition={{ duration: 0.35, delay: i * 0.05 }}
-              className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-lg"
-            >
-              <div className="flex items-center gap-3">
-                <div className="size-10 rounded-xl bg-white/10 grid place-items-center">
-                  {React.createElement(s.icon, { className: "size-5" })}
+        <div className="relative">
+          <div className="absolute left-0 right-0 top-11 h-[2px] bg-white/10" />
+          <div className="grid md:grid-cols-5 gap-6">
+            {[
+              { icon: Film, title: "Create", text: "Flex is the main character. Keep it fun & native." },
+              { icon: ImageIcon, title: "Brand", text: "Add the official title/logo. No other banners." },
+              { icon: Rocket, title: "Publish", text: `Post to ${CONFIG.program.allowedPlatforms.join(", ")}.` },
+              { icon: PlayCircle, title: "Grow", text: `Hit ${CONFIG.program.minViews.toLocaleString()}+ on a single post.` },
+              { icon: ClipboardList, title: "Verify", text: "Record analytics (top→bottom) in one clean take." },
+            ].map((s, i) => (
+              <motion.div
+                key={s.title}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.35 }}
+                transition={{ duration: 0.35, delay: i * 0.06 }}
+                className="relative"
+              >
+                <div className="absolute -top-2 left-0 right-0 flex justify-center">
+                  <div className="size-10 rounded-full bg-white/10 backdrop-blur grid place-items-center border border-white/10">
+                    {React.createElement(s.icon, { className: "size-5" })}
+                  </div>
                 </div>
-                <h3 className="font-semibold">{s.title}</h3>
-              </div>
-              <p className="mt-2 text-sm text-slate-300/90">{s.text}</p>
-            </motion.div>
-          ))}
+                <Card className="bg-white/5 border-white/10 pt-8">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">{s.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-sm text-slate-300/90">
+                    {s.text}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* TIERS — неоновые карточки + калькулятор сбоку (мозаика) */}
+      {/* TIERS + калькулятор в сайдкарте */}
       <section id="tiers" className="mx-auto max-w-7xl px-5 py-16">
         <div className="grid lg:grid-cols-3 gap-6 items-start">
           <div className="lg:col-span-2">
-            <div className="text-left mb-6">
+            <div className="mb-6">
               <h2 className="text-3xl md:text-4xl font-bold">Payout tiers</h2>
-              <p className="mt-2 text-slate-300">
-                USD equivalent at approval time. One payout per post.
-              </p>
+              <p className="mt-2 text-slate-300">USD equivalent at approval time. One payout per post.</p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-4">
@@ -305,7 +329,7 @@ export default function SpreadSite() {
             </div>
           </div>
 
-          {/* калькулятор сбоку */}
+          {/* калькулятор */}
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -346,98 +370,13 @@ export default function SpreadSite() {
             </CardContent>
           </Card>
         </div>
-
-        <div className="mt-6 text-xs text-slate-400 text-center">
-         
-        </div>
       </section>
 
-      {/* RULES — стеклянные карточки 2x */}
-      <section id="rules" className="mx-auto max-w-7xl px-5 py-16">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold">Rules</h2>
-          <p className="mt-2 text-slate-300">Short, clear, anti-fraud.</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card className="bg-white/5 border-white/10 backdrop-blur-xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ShieldCheck className="size-5" /> Eligibility & content
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-slate-200 space-y-2">
-              <ul className="list-disc pl-5 space-y-2">
-                <li>Spread must be the <strong>main character</strong> (no deepfakes).</li>
-                <li>Overlay the official logo/title. No other ads or banners.</li>
-                <li>Minimum {CONFIG.program.minViews.toLocaleString()} views on a <strong>single</strong> post.</li>
-                <li>Allowed: {CONFIG.program.allowedPlatforms.join(", ")}.</li>
-                <li>No politics, hate, drugs, gambling or illegal content.</li>
-                <li>Duets/photo carousels are fine if Spread stays primary.</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/5 border-white/10 backdrop-blur-xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Video className="size-5" /> Submissions & verification
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-slate-200 space-y-2">
-              <ul className="list-disc pl-5 space-y-2">
-                <li>Screen-record analytics (top → bottom) in one clean take.</li>
-                <li>Give direct links to the post and to the recording.</li>
-                <li>We may request extra checks. Never share passwords/seed phrases.</li>
-                <li>No bought views/likes/comments. Blocked/removed posts can’t be paid.</li>
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* FAQ — тёмные табы */}
-      <section id="faq" className="mx-auto max-w-7xl px-5 py-16">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold">FAQ</h2>
-          <p className="mt-2 text-slate-300">Quick answers to common questions.</p>
-        </div>
-
-        <Tabs defaultValue="general" className="max-w-4xl mx-auto">
-          <TabsList className="grid grid-cols-3 bg-white/10 rounded-xl p-1 gap-1 border border-white/10">
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="payment">Payment</TabsTrigger>
-            <TabsTrigger value="content">Content</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="general" className="text-slate-200 text-sm space-y-3 mt-4">
-            <Q q="Do views add up across platforms?" a="No. We count views on a single post. Re-uploads on other platforms can be submitted separately." />
-            <Q q="How long will the program run?" a="Indefinitely. We have no end date planned." />
-            <Q q="Can I use old stream moments?" a="Yes. Any Spread-centered clip works if it meets the rules." />
-            <Q q="Can I reshare someone else’s clip?" a="Yes. Reposts are eligible if they meet the rules and you can verify analytics for your post." />
-          </TabsContent>
-
-          <TabsContent value="payment" className="text-slate-200 text-sm space-y-3 mt-4">
-            <Q q="Where do you pay?" a={`${CONFIG.program.payoutNetworks.join(", ")}. One payout per post.`} />
-            <Q q="When do you pay?" a="Typically within 2–5 days after approval." />
-            <Q q="What if my post has 9,500 views?" a={`Minimum is ${CONFIG.program.minViews.toLocaleString()} — we don’t round up.`} />
-            <Q q="If I get 1M now and 10M later, do I get a top-up?" a="No. Choose when to submit; we pay once per post." />
-          </TabsContent>
-
-          <TabsContent value="content" className="text-slate-200 text-sm space-y-3 mt-4">
-            <Q q="Are duets allowed?" a="Yes, if Spread remains the main character." />
-            <Q q="Can I include other ads?" a="No. Don’t add competing banners or promos." />
-            <Q q="Language / region limits?" a="Any language and region are welcome, as long as the link is viewable for moderation." />
-            <Q q="What about photo posts?" a="Photo carousels are OK on platforms that support them; regular text posts are not paid." />
-          </TabsContent>
-        </Tabs>
-      </section>
-
-      {/* SUBMIT — новая композиция формы: две колонки + сайд-панель чеклиста */}
+      {/* SUBMIT — иной порядок полей, другой вид */}
       <section id="submit" className="mx-auto max-w-7xl px-5 py-16">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold">Submit your video</h2>
-          <p className="mt-2 text-slate-300">Share the essentials — we’ll review and DM you on Telegram.</p>
+          <p className="mt-2 text-slate-300">Send links + analytics. We’ll review and reach you on Telegram.</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
@@ -446,6 +385,11 @@ export default function SpreadSite() {
             <CardContent className="p-6">
               {!submitted ? (
                 <form onSubmit={onSubmit} className="grid md:grid-cols-2 gap-5">
+                  <div className="md:col-span-2">
+                    <Label htmlFor="videoUrl">Post URL</Label>
+                    <Input id="videoUrl" name="videoUrl" type="url" placeholder="https://..." value={form.videoUrl} onChange={onChange} required className="bg-black/30 border-white/10" />
+                  </div>
+
                   <div>
                     <Label htmlFor="platform">Platform</Label>
                     <select
@@ -459,11 +403,6 @@ export default function SpreadSite() {
                         <option key={p} value={p} className="bg-slate-900">{p}</option>
                       ))}
                     </select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="videoUrl">Post URL</Label>
-                    <Input id="videoUrl" name="videoUrl" type="url" placeholder="https://..." value={form.videoUrl} onChange={onChange} required className="bg-black/30 border-white/10" />
                   </div>
 
                   <div>
@@ -481,7 +420,7 @@ export default function SpreadSite() {
                     </p>
                   </div>
 
-                  <div>
+                  <div className="md:col-span-2">
                     <Label htmlFor="proofUrl">Analytics screen-record link</Label>
                     <Input id="proofUrl" name="proofUrl" type="url" placeholder="https://drive.google.com/..." value={form.proofUrl} onChange={onChange} required className="bg-black/30 border-white/10" />
                   </div>
@@ -506,12 +445,12 @@ export default function SpreadSite() {
                     <Input id="walletAddress" name="walletAddress" placeholder="Wallet for payouts" value={form.walletAddress} onChange={onChange} required className="bg-black/30 border-white/10" />
                   </div>
 
-                  <div className="md:col-span-2">
+                  <div>
                     <Label htmlFor="handle">Telegram handle</Label>
                     <Input id="handle" name="handle" placeholder="@yourname" value={form.handle} onChange={onChange} required className="bg-black/30 border-white/10" />
                   </div>
 
-                  <div className="md:col-span-2">
+                  <div>
                     <Label htmlFor="email">Email (optional)</Label>
                     <Input id="email" name="email" type="email" placeholder="you@example.com" value={form.email} onChange={onChange} className="bg-black/30 border-white/10" />
                   </div>
@@ -525,8 +464,7 @@ export default function SpreadSite() {
                     <Switch
                       id="agreeRules"
                       checked={form.agreeRules}
-                      onCheckedChange={(v) => setForm((f) => ({ ...f, agreeRules: v }))}
-                    />
+                      onCheckedChange={(v) => setForm((f) => ({ ...f, agreeRules: v }))} />
                     <Label htmlFor="agreeRules" className="text-sm text-slate-200">
                       I agree with the Rules and confirm the clip shows the {CONFIG.brand} logo/title with no competing ads.
                     </Label>
@@ -534,9 +472,13 @@ export default function SpreadSite() {
 
                   <div className="md:col-span-2 flex flex-wrap items-center justify-between gap-3 pt-2">
                     <p className="text-xs text-slate-400">
-                      * Final amount depends on quality and compliance.
+                      * Final amount depends on traffic quality and compliance.
                     </p>
-                    <Button type="submit" disabled={submitting || !form.agreeRules} className="bg-gradient-to-r from-amber-500 via-fuchsia-500 to-sky-500 hover:opacity-90">
+                    <Button
+                      type="submit"
+                      disabled={submitting || !form.agreeRules}
+                      className="bg-gradient-to-r from-amber-500 via-fuchsia-500 to-sky-500 hover:opacity-90"
+                    >
                       {submitting ? "Submitting…" : "Submit for review"}
                     </Button>
                   </div>
@@ -546,7 +488,7 @@ export default function SpreadSite() {
                   <CheckCircle2 className="size-12 mx-auto text-emerald-400" />
                   <h3 className="mt-4 text-2xl font-bold">Submission received</h3>
                   <p className="mt-2 text-slate-200">
-                    Thanks! We’ll review and contact you via Telegram <span className="font-mono">{form.handle || "(handle)"}</span>.
+                    Thanks! We’ll contact you via Telegram <span className="font-mono">{form.handle || "(handle)"}</span>.
                   </p>
                   <div className="mt-6">
                     <Button asChild className="bg-white/10 hover:bg-white/20 border-white/10">
@@ -558,7 +500,7 @@ export default function SpreadSite() {
             </CardContent>
           </Card>
 
-          {/* Сайд-панель: чеклист и ссылки */}
+          {/* Чеклист и ссылки — сайдбар */}
           <div className="space-y-4">
             <Card className="bg-white/5 border-white/10">
               <CardHeader>
@@ -569,10 +511,10 @@ export default function SpreadSite() {
               </CardHeader>
               <CardContent className="text-sm text-slate-200 space-y-2">
                 <ul className="list-disc pl-5 space-y-2">
-                  <li>Spread is the main character.</li>
-                  <li>Official logo/title is added.</li>
-                  <li>{CONFIG.program.minViews.toLocaleString()}+ views on one post.</li>
-                  <li>One clean analytics screen-record (top→bottom).</li>
+                  <li>Flex is the main character.</li>
+                  <li>Official logo/title added and visible.</li>
+                  <li>{CONFIG.program.minViews.toLocaleString()}+ views on a single post.</li>
+                  <li>Clean analytics screen-record (top→bottom).</li>
                 </ul>
               </CardContent>
             </Card>
@@ -583,18 +525,49 @@ export default function SpreadSite() {
                 <CardDescription>Official resources</CardDescription>
               </CardHeader>
               <CardContent className="text-sm">
-                <div className="flex items-center justify-between">
-                  <span>Pump.Fun</span>
-                  <a className="text-fuchsia-300 hover:underline" href={CONFIG.links.pump} target="_blank" rel="noreferrer">Open</a>
-                </div>
-                <div className="mt-2 flex items-center justify-between">
-                  <span>X (Twitter)</span>
-                  <a className="text-fuchsia-300 hover:underline" href={CONFIG.links.x} target="_blank" rel="noreferrer">Open</a>
-                </div>
+                <LinkRow label="Pump.Fun" href={CONFIG.links.pump} />
+                <LinkRow label="X (Twitter)" href={CONFIG.links.x} />
               </CardContent>
             </Card>
           </div>
         </div>
+      </section>
+
+      {/* FAQ — тёмные табы */}
+      <section id="faq" className="mx-auto max-w-7xl px-5 py-16">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold">FAQ</h2>
+          <p className="mt-2 text-slate-300">Quick answers to common questions.</p>
+        </div>
+
+        <Tabs defaultValue="general" className="max-w-4xl mx-auto">
+          <TabsList className="grid grid-cols-3 bg-white/10 rounded-xl p-1 gap-1 border border-white/10">
+            <TabsTrigger value="general">General</TabsTrigger>
+            <TabsTrigger value="payment">Payment</TabsTrigger>
+            <TabsTrigger value="content">Content</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="general" className="text-slate-200 text-sm space-y-3 mt-4">
+            <Q q="Do views add up across platforms?" a="No. We count views on a single post. Re-uploads on other platforms can be submitted separately." />
+            <Q q="How long will the program run?" a="Indefinitely. We have no end date planned." />
+            <Q q="Can I use old stream moments?" a="Yes. Any Flex-centered clip works if it meets the rules." />
+            <Q q="Can I reshare someone else’s clip?" a="Yes, if your post meets the rules and you can verify analytics for it." />
+          </TabsContent>
+
+          <TabsContent value="payment" className="text-slate-200 text-sm space-y-3 mt-4">
+            <Q q="Where do you pay?" a={`${CONFIG.program.payoutNetworks.join(", ")}. One payout per post.`} />
+            <Q q="When do you pay?" a="Typically within 2–5 days after approval." />
+            <Q q="What if my post has 9,500 views?" a={`Minimum is ${CONFIG.program.minViews.toLocaleString()} — we don’t round up.`} />
+            <Q q="If I get 1M now and 10M later, do I get a top-up?" a="No. Choose when to submit; we pay once per post." />
+          </TabsContent>
+
+          <TabsContent value="content" className="text-slate-200 text-sm space-y-3 mt-4">
+            <Q q="Are duets allowed?" a="Yes, if Flex remains the main character." />
+            <Q q="Can I include other ads?" a="No. Don’t add competing banners or promos." />
+            <Q q="Language / region limits?" a="Any language and region are welcome, as long as the link is viewable for moderation." />
+            <Q q="What about photo posts?" a="Photo carousels are OK on platforms that support them; regular text posts are not paid." />
+          </TabsContent>
+        </Tabs>
       </section>
 
       {/* FOOTER */}
@@ -629,6 +602,38 @@ function Q({ q, a }: { q: string; a: string }) {
     <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur">
       <div className="font-semibold">{q}</div>
       <div className="text-slate-200 mt-1">{a}</div>
+    </div>
+  );
+}
+
+function StatTile({
+  icon,
+  label,
+  value,
+}: {
+  icon: any;
+  label: string;
+  value: string | number;
+}) {
+  const Icon = icon;
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+      <div className="flex items-center gap-2 text-slate-300">
+        <Icon className="size-4" />
+        <span className="text-xs">{label}</span>
+      </div>
+      <div className="mt-2 text-2xl font-extrabold">{value}</div>
+    </div>
+  );
+}
+
+function LinkRow({ label, href }: { label: string; href: string }) {
+  return (
+    <div className="flex items-center justify-between py-2 first:pt-0 last:pb-0">
+      <span>{label}</span>
+      <a className="text-fuchsia-300 hover:underline" href={href} target="_blank" rel="noreferrer">
+        Open
+      </a>
     </div>
   );
 }
