@@ -348,7 +348,7 @@ export default function SpreadSite() {
         </div>
 
         <div className="mt-6 text-xs text-slate-400 text-center">
-          Program started on {new Date(CONFIG.program.startDateISO).toLocaleDateString()} — 100% of collected fees are redistributed to creators.
+         
         </div>
       </section>
 
